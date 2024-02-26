@@ -11,17 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
-	Name string `json:"name"`
-}
-
 type Table struct {
-	TableID int8   `json:"tableid" gorm:"primaryKey"`
-	Phone   string `json:"phone" gorm:"size:255"`
-	Status  uint8  `json:"status"`
-	Code    string `json:"code" gorm:"size:255"`
+	TableID   int8   `json:"tableid" gorm:"primaryKey"`
+	Phone     string `json:"phone" gorm:"size:255"`
+	Status    uint8  `json:"status"`
+	Code      string `json:"code" gorm:"size:255"`
 	StartTime string `json:"startTime" gorm:"size:255"`
-	EndTime string `json:"endTime" gorm:"size:255"`
+	EndTime   string `json:"endTime" gorm:"size:255"`
 }
 
 var connections []*websocket.Conn
@@ -33,19 +29,20 @@ func main() {
 	app := fiber.New()
 	app.Use(cors.New())
 
-	dsn := "root:1234@tcp(localhost:3306)/testgocon?parseTime=true"
+	dsn := "ur1xpked8rzvzaan:wTUXKsx9Wr05B9NSF874@tcp(bovpwi5ezwdtd5jhp1ab-mysql.services.clever-cloud.com:3306)/bovpwi5ezwdtd5jhp1ab?parseTime=true"
 	dbs, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	db = dbs
 
 	if err != nil {
 		panic(err)
 	}
-	app.Put("/updatestate/:id",UpdateRow)
-	app.Get("/gettables",GetTable)
+
+	db.AutoMigrate(&Table{})
+
+	app.Put("/updatestate/:id", UpdateRow)
+	app.Get("/gettables", GetTable)
 
 	app.Get("/ws", websocket.New(MainWebsocket))
 
 	app.Listen(":8080")
 }
-
-
