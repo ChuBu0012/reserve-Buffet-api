@@ -1,12 +1,13 @@
 package main
 
 import (
-	// "fmt"
+	"os"
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/websocket/v2"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -20,17 +21,20 @@ type Table struct {
 	EndTime   string `json:"endTime" gorm:"size:255"`
 }
 
-var connections []*websocket.Conn
-var lock = sync.Mutex{}
+var (
+	connections []*websocket.Conn
+	lock        sync.Mutex
+)
 
 var db *gorm.DB
 
 func main() {
+	godotenv.Load(".env")
+
 	app := fiber.New()
 	app.Use(cors.New())
 
-	dsn := "ur1xpked8rzvzaan:wTUXKsx9Wr05B9NSF874@tcp(bovpwi5ezwdtd5jhp1ab-mysql.services.clever-cloud.com:3306)/bovpwi5ezwdtd5jhp1ab?parseTime=true"
-	dbs, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dbs, err := gorm.Open(mysql.Open(os.Getenv("CONNECTDB")), &gorm.Config{})
 	db = dbs
 
 	if err != nil {
