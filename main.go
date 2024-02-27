@@ -50,5 +50,8 @@ func main() {
 	app.Get("/ws", websocket.New(MainWebsocket))
 
 	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	log.Fatal(app.Listen(":" + port))
 }
