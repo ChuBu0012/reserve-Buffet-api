@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"sync"
 
@@ -48,5 +49,6 @@ func main() {
 
 	app.Get("/ws", websocket.New(MainWebsocket))
 
-	app.Listen(":8080")
+	port := os.Getenv("PORT")
+	log.Fatal(app.Listen(":" + port))
 }
